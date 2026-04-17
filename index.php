@@ -30,7 +30,7 @@ switch ($action) {
             exit;
         }
 
-        $sql= "SELECT
+        $sql = "SELECT
             u.user_id, u.username, u.credential, u.full_name, u.display_name, u.employee_code,
             u.status, u.designation, u.gender, u.dob, u.email, u.personal_email,
             u.hourly_rate, u.is_lock, u.user_photo, wc.work_category_name, w.time_zone, u.gdoj,
@@ -49,7 +49,7 @@ switch ($action) {
         WHERE u.username = ?";
 
         $stmt = $mysqli->prepare($sql);
-        
+
         $stmt->bind_param("s", $username);
         $stmt->execute();
 
@@ -82,7 +82,7 @@ switch ($action) {
         }
 
         $token = generateToken([
-            'user_id'  => $user['user_id'],
+            'user_id' => $user['user_id'],
             'username' => $user['username'],
             'timezone' => $user['time_zone'],
         ]);
@@ -91,13 +91,13 @@ switch ($action) {
         unset($user['credential']);
 
         echo json_encode([
-            "status"  => true,
+            "status" => true,
             "message" => "Login successful",
-            "token"   => $token,
-            "data"    => $user
+            "token" => $token,
+            "data" => $user
         ]);
-    break;
-    
+        break;
+
     case "getLeaveTypes":
         require_once "jwt_auth.php";
         $auth = requireAuth();
@@ -133,14 +133,14 @@ switch ($action) {
             "status" => true,
             "data" => $leaveTypes
         ]);
-    break;
+        break;
 
     case "getUsers":
         require_once "jwt_auth.php";
         $auth = requireAuth();
         $userId = $auth->uid;
 
-        $sql="SELECT user_id, CONCAT(full_name, ' - ', employee_code) AS full_name_code
+        $sql = "SELECT user_id, CONCAT(full_name, ' - ', employee_code) AS full_name_code
         FROM tbl_users WHERE status = 'Active' AND (user_id = ? OR parent_id = ?)
         ORDER BY full_name ASC";
 
@@ -156,13 +156,13 @@ switch ($action) {
             "status" => true,
             "data" => $users
         ]);
-    break;  
-    
+        break;
+
     case "lockUser":
         require_once "jwt_auth.php";
         $auth = requireAuth();
         ini_set('date.timezone', getTimezone($auth));
-        
+
         $locked_user = trim($_POST['locked_user'] ?? '');
         $type = trim($_POST['type'] ?? '');
         $from_date = trim($_POST['from_date'] ?? '');
@@ -173,24 +173,22 @@ switch ($action) {
         $userId = $auth->uid;
         $datetime = date("Y-m-d H:i:s");
 
-        if($type==13 && $coff_date=='') // coff-date is required when type is Compensatory Off
+        if ($type == 13 && $coff_date == '') // coff-date is required when type is Compensatory Off
         {
             echo json_encode([
                 "status" => false,
                 "message" => "Compensatory Off date is required."
             ]);
             exit;
-        }
-        else
-        {
-            $coff_date='';
+        } else {
+            $coff_date = '';
         }
 
         $lck = $mysqli->prepare("UPDATE tbl_users SET is_lock = 1 WHERE user_id = ?");
         $lck->bind_param("i", $locked_user);
         $lck->execute();
-        
-        $sql="INSERT INTO tbl_user_lock (remarks, type, locked_user, locked_by, from_date, to_date, lock_date, contact_number, coff_date)
+
+        $sql = "INSERT INTO tbl_user_lock (remarks, type, locked_user, locked_by, from_date, to_date, lock_date, contact_number, coff_date)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $mysqli->prepare($sql);
         $stmt->bind_param("siiisssss", $remarks, $type, $locked_user, $userId, $from_date, $to_date, $datetime, $contact_number, $coff_date);
@@ -205,7 +203,7 @@ switch ($action) {
                 "message" => "Failed to submit user lock request."
             ]);
         }
-    break;
+        break;
 
     case "breakStatus":
         require_once "jwt_auth.php";
@@ -213,10 +211,10 @@ switch ($action) {
         $decision = DecideButton($mysqli, $auth);
 
         echo json_encode([
-            "status"  => true,
-            "break_status"  => $decision['button']=="IN" ? 1 : 0
+            "status" => true,
+            "break_status" => $decision['button'] == "IN" ? 1 : 0
         ]);
-    break;   
+        break;
 
     case "validateQR":
         require_once "jwt_auth.php";
@@ -228,11 +226,11 @@ switch ($action) {
         $decision = DecideButton($mysqli, $auth);
 
         echo json_encode([
-            "status"  => true,
+            "status" => true,
             "message" => "QR code is valid.",
-            "button"  => $decision['button']
+            "button" => $decision['button']
         ]);
-    break;
+        break;
 
     case "breakOut":
         require_once "jwt_auth.php";
@@ -242,17 +240,17 @@ switch ($action) {
         $qr_value = trim($_POST['qr_value'] ?? '');
         validateQR($mysqli, $qr_value);
 
-        $reason     = trim($_POST['reason'] ?? '');
-        $user_id    = $auth->uid;
-        $now        = date('Y-m-d H:i:s');
-        $today      = date('Y-m-d');
+        $reason = trim($_POST['reason'] ?? '');
+        $user_id = $auth->uid;
+        $now = date('Y-m-d H:i:s');
+        $today = date('Y-m-d');
 
         if ($reason === '') {
-                echo json_encode([
-                    "status"  => false,
-                    "message" => "Reason is required for break OUT."
-                ]);
-                exit;
+            echo json_encode([
+                "status" => false,
+                "message" => "Reason is required for break OUT."
+            ]);
+            exit;
         }
 
         $stmt = $mysqli->prepare("
@@ -265,19 +263,19 @@ switch ($action) {
         if ($stmt->affected_rows > 0) {
             $stmt->close();
             echo json_encode([
-                "status"     => true,
-                "message"    => "Break OUT recorded successfully.",
-                "reason"     => $reason,
-                "break_out"  => $now
+                "status" => true,
+                "message" => "Break OUT recorded successfully.",
+                "reason" => $reason,
+                "break_out" => $now
             ]);
         } else {
             $stmt->close();
             echo json_encode([
-                "status"  => false,
+                "status" => false,
                 "message" => "Failed to record break OUT. Please try again."
             ]);
         }
-    break;
+        break;
 
     case "breakIn":
         require_once "jwt_auth.php";
@@ -286,11 +284,11 @@ switch ($action) {
 
         $qr_value = trim($_POST['qr_value'] ?? '');
         validateQR($mysqli, $qr_value);
-        
-        $now   = date('Y-m-d H:i:s');
-        $user_id    = $auth->uid;
+
+        $now = date('Y-m-d H:i:s');
+        $user_id = $auth->uid;
         $today = date('Y-m-d');
-        
+
         $stmt = $mysqli->prepare("
             UPDATE tbl_breaktime_log
             SET break_in = ?, status = 'closed'
@@ -302,23 +300,23 @@ switch ($action) {
         if ($stmt->affected_rows > 0) {
             $stmt->close();
             echo json_encode([
-                "status"    => true,
-                "message"   => "Break IN recorded successfully.",
-                "break_in"  => $now
+                "status" => true,
+                "message" => "Break IN recorded successfully.",
+                "break_in" => $now
             ]);
         } else {
             $stmt->close();
             echo json_encode([
-                "status"  => false,
+                "status" => false,
                 "message" => "Failed to record break IN. Record may already be closed."
             ]);
         }
-    break;
+        break;
 
     case "listSalary":
         require_once "salary/listSalary.php";
-    break; 
-    
+        break;
+
     case "breakLogListing":
         require_once "jwt_auth.php";
         $auth = requireAuth();
@@ -338,26 +336,54 @@ switch ($action) {
         ORDER BY bl.id DESC";
 
         $stmt = $mysqli->prepare($sql);
-        $stmt->bind_param("si", $date, $userId);    
+        $stmt->bind_param("si", $date, $userId);
         $stmt->execute();
         $result = $stmt->get_result();
         $logs = [];
         while ($row = $result->fetch_assoc()) {
             $logs[] = $row;
-        }       
+        }
 
         echo json_encode([
             "status" => true,
             "data" => $logs
         ]);
-    break;    
+        break;
+
+    case "lastWorkingDate":
+        require_once "effism/lastWorkingDate.php";
+        break;
+
+    case "saveTime":
+        require_once "effism/saveTime.php";
+        break;
+
+    case "addNewJob":
+        require_once "effism/addNewJob.php";
+        break;
+
+    case "editJob":
+        require_once "effism/editJob.php";
+        break;
+
+    case "completeJobdiary":
+        require_once "effism/completeJobdiary.php";
+        break;
+
+    case "jobdiaryStatus":
+        require_once "effism/jobdiaryStatus.php";
+        break;
+
+    case "listJobs":
+        require_once "effism/listJobs.php";
+        break;
 
     default:
         echo json_encode([
             "status" => false,
             "message" => "Invalid action"
         ]);
-    break;    
+        break;
 }
 
 
@@ -373,53 +399,53 @@ function UserData($userId, $col, $mysqliection)
     return null;
 }
 
-function validateQR($mysqli, $qr_value) 
-{ 
-    if ($qr_value == "") { 
-        echo json_encode([ 
-            "status"  => false, 
-            "message" => "QR value is missing." 
-        ]); 
-        exit; 
-    } 
- 
+function validateQR($mysqli, $qr_value)
+{
+    if ($qr_value == "") {
+        echo json_encode([
+            "status" => false,
+            "message" => "QR value is missing."
+        ]);
+        exit;
+    }
+
     $stmt = $mysqli->prepare("SELECT is_active, created_at, TIMESTAMPDIFF(SECOND, created_at, NOW()) AS age_seconds
         FROM tbl_breaktime_qr 
-        WHERE qr_token = ? LIMIT 1"); 
-    $stmt->bind_param("s", $qr_value); 
-    $stmt->execute(); 
-    $result = $stmt->get_result(); 
-    $row    = $result->fetch_assoc(); 
-    $stmt->close(); 
- 
-    if (!$row) { 
-        echo json_encode([ 
-            "status"  => false, 
-            "reason"  => "invalid", 
-            "message" => "Invalid QR code. This token does not exist." 
-        ]); 
-        exit; 
-    } 
- 
+        WHERE qr_token = ? LIMIT 1");
+    $stmt->bind_param("s", $qr_value);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    $stmt->close();
+
+    if (!$row) {
+        echo json_encode([
+            "status" => false,
+            "reason" => "invalid",
+            "message" => "Invalid QR code. This token does not exist."
+        ]);
+        exit;
+    }
+
     // Check expired by time (same condition as UPDATE in QR generator)
-    if ((int)$row['age_seconds'] >= VALIDITY_SECONDS) { 
-        echo json_encode([ 
-            "status"  => false, 
-            "reason"  => "expired", 
-            "message" => "QR code has expired. Please scan the latest QR code." 
-        ]); 
-        exit; 
-    } 
+    if ((int) $row['age_seconds'] >= VALIDITY_SECONDS) {
+        echo json_encode([
+            "status" => false,
+            "reason" => "expired",
+            "message" => "QR code has expired. Please scan the latest QR code."
+        ]);
+        exit;
+    }
 
     // Check is_active flag
-    if ((int)$row['is_active'] === 0) { 
-        echo json_encode([ 
-            "status"  => false, 
-            "reason"  => "expired", 
-            "message" => "QR code has expired. Please scan the latest QR code." 
-        ]); 
-        exit; 
-    } 
+    if ((int) $row['is_active'] === 0) {
+        echo json_encode([
+            "status" => false,
+            "reason" => "expired",
+            "message" => "QR code has expired. Please scan the latest QR code."
+        ]);
+        exit;
+    }
 }
 
 
@@ -427,7 +453,7 @@ function DecideButton(mysqli $mysqli, $auth)
 {
     $userId = $auth->uid;
     ini_set('date.timezone', getTimezone($auth));
-    $today  = date('Y-m-d');
+    $today = date('Y-m-d');
 
     // Get the most recent entry for today
     $stmt = $mysqli->prepare("
@@ -444,15 +470,15 @@ function DecideButton(mysqli $mysqli, $auth)
 
     if ($row && $row['status'] === 'open') {
         return [
-            "status"  => true,
-            "button"  => "IN",
+            "status" => true,
+            "button" => "IN",
             "message" => "Employee is currently on break."
         ];
     }
 
     return [
-        "status"  => true,
-        "button"  => "OUT",
+        "status" => true,
+        "button" => "OUT",
         "message" => "Employee is not on break."
     ];
 }
