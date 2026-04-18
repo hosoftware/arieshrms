@@ -19,7 +19,7 @@ $result = $stmt->get_result();
 if ($row = $result->fetch_assoc()) {
     echo json_encode([
         "status" => true,
-        "is_complete" => (int)$row['is_complete']
+        "is_complete" => (int) $row['is_complete']
     ]);
 } else {
     echo json_encode([
@@ -29,4 +29,4 @@ if ($row = $result->fetch_assoc()) {
     ]);
 }
 
-$stmt->close();
+$stmt->close();

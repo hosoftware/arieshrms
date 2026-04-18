@@ -6,7 +6,7 @@
     $query = "
     SELECT COALESCE(MAX(t.date_log), u.date_created) AS last_working_date
     FROM tbl_users u
-    LEFT JOIN tbl_time t ON t.user_id = u.user_id AND t.is_complete = 1
+    LEFT JOIN tbl_time t ON t.user_id = u.user_id AND t.is_complete = '1'
     WHERE u.user_id = ?";
 
     $stmt = $mysqli->prepare($query);
@@ -16,10 +16,13 @@
     $result = $stmt->get_result();
     $row    = $result->fetch_assoc();
 
+    $date = new DateTime($row['last_working_date']);
+    $date->modify('+1 day');
+
     echo json_encode([
         "status" => true,
         "message" => "Last working date retrieved successfully.",
-        "last_working_date" => $row['last_working_date']
+        "last_working_date" => $date->format('Y-m-d')
     ]);
 
 ?>

@@ -11,10 +11,12 @@ if (empty($date)) {
     exit;
 }
 
-$sql = "SELECT workreport_id, taskname, est_time, act_time, status 
-        FROM tbl_workreports 
-        WHERE user_id = ? AND date_report = ? 
-        ORDER BY row_id ASC";
+$sql = "SELECT w.workreport_id, w.taskname, w.est_time, w.act_time, w.status, w.job_no, w.description, 
+        m.main_type_name AS mian_type  
+        FROM tbl_workreports w
+        LEFT JOIN tbl_main_type m ON m.main_type_id=w.main_type
+        WHERE w.user_id = ? AND w.date_report = ? 
+        ORDER BY w.row_id ASC";
 
 $stmt = $mysqli->prepare($sql);
 $stmt->bind_param("is", $userId, $date);
