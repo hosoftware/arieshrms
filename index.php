@@ -378,6 +378,10 @@ switch ($action) {
         require_once "effism/listJobs.php";
         break;
 
+    case "fetchTime":
+        require_once "effism/fetchTime.php";
+        break;
+
     default:
         echo json_encode([
             "status" => false,
