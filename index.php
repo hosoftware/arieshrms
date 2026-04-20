@@ -381,7 +381,15 @@ switch ($action) {
     case "fetchTime":
         require_once "effism/fetchTime.php";
         break;
-
+        
+    case "mainType":
+        require_once "effism/mainType.php";
+        break;
+        
+    case "subType":
+        require_once "effism/subType.php";
+        break;
+    
     default:
         echo json_encode([
             "status" => false,

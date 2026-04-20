@@ -30,16 +30,17 @@ $est_time    = trim($_POST['est_time']    ?? '');
 $act_time    = trim($_POST['act_time']    ?? '');
 $description = trim($_POST['description'] ?? '');
 $status      = trim($_POST['status']      ?? '0');
+$job_type =    trim($_POST['sub_type']   ?? '');
 
 $sql = "INSERT INTO tbl_workreports 
-    (user_id, date_report, row_id, taskname, main_type, job_no, est_time, act_time, description, status) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    (user_id, date_report, row_id, taskname, main_type, job_no, est_time, act_time, description, status, job_type) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 $stmt = $mysqli->prepare($sql);
 
 $stmt->bind_param(
-    "isssssssss",
-    $userId, $date_report, $row_id, $taskname, $main_type, $job_no, $est_time, $act_time, $description, $status
+    "issssssssss",
+    $userId, $date_report, $row_id, $taskname, $main_type, $job_no, $est_time, $act_time, $description, $status, $job_type
 );
 
 if ($stmt->execute()) {

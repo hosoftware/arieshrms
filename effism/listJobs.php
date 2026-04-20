@@ -12,9 +12,10 @@ if (empty($date)) {
 }
 
 $sql = "SELECT w.workreport_id, w.taskname, w.est_time, w.act_time, w.status, w.job_no, w.description, 
-        m.main_type_name AS mian_type  
+        m.main_type_name AS mian_type, s.job_type_name AS sub_type  
         FROM tbl_workreports w
         LEFT JOIN tbl_main_type m ON m.main_type_id=w.main_type
+        LEFT JOIN tbl_job_type s ON s.id=w.job_type
         WHERE w.user_id = ? AND w.date_report = ? 
         ORDER BY w.row_id ASC";
 
