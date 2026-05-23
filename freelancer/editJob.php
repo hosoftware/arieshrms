@@ -11,6 +11,7 @@ $taskname = trim($_POST['taskname'] ?? '');
 $job_no = trim($_POST['job_no'] ?? '');
 $act_time = trim($_POST['act_time'] ?? '');
 $description = trim($_POST['description'] ?? '');
+$act_edit_entry = date("Y-m-d H:i:s");
 
 // Validate required fields
 if (empty($report_id) || empty($date_report) || empty($taskname) || empty($job_no) || empty($act_time)) {
@@ -36,11 +37,22 @@ $sql = "UPDATE tbl_workreports SET
             taskname = ?, 
             job_no = ?, 
             act_time = ?, 
-            description = ? 
+            description = ?,
+            act_entry = ?
         WHERE workreport_id = ? AND user_id = ? AND date_report = ?";
 
 $stmt = $mysqli->prepare($sql);
-$stmt->bind_param("ssssiis", $taskname, $job_no, $act_time, $description, $report_id, $userId, $date_report);
+$stmt->bind_param(
+    "sssssiis",
+    $taskname,
+    $job_no,
+    $act_time,
+    $description,
+    $act_edit_entry,
+    $report_id,
+    $userId,
+    $date_report
+);
 
 if ($stmt->execute()) {
     echo json_encode([

@@ -17,7 +17,8 @@ $timeInSeconds = timeToSeconds($timeIn);
 $nwtSeconds = timeToSeconds($nwt);
 $totalJobSeconds = 0;
 
-$stmt = $mysqli->prepare("SELECT act_time FROM tbl_workreports WHERE user_id = ? AND date_report = ? AND taskname!=''");
+$stmt = $mysqli->prepare("SELECT act_time FROM tbl_workreports WHERE user_id = ? AND date_report = ? 
+AND taskname!=''AND act_time IS NOT NULL AND act_time != '00:00:00'");
 $stmt->bind_param("is", $userId, $date);
 $stmt->execute();
 $result = $stmt->get_result();

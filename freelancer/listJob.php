@@ -27,9 +27,19 @@ function fetchRows($mysqli, $sql, $types, ...$params)
     return $rows;
 }
 
-$workreportBase = "SELECT workreport_id, taskname, act_time, job_no, description
-        FROM tbl_workreports
-        WHERE user_id = ? AND date_report = ? AND taskname!='' AND (act_time!=NULL OR act_time!='00:00:00')";
+$workreportBase = "SELECT 
+        workreport_id, 
+        taskname, 
+        act_time, 
+        job_no, 
+        description,
+        DATE_FORMAT(act_entry, '%d-%m-%Y %h:%i %p') as act_entry
+    FROM tbl_workreports
+    WHERE user_id = ? 
+    AND date_report = ? 
+    AND taskname != '' 
+    AND act_time IS NOT NULL 
+    AND act_time != '00:00:00'";
         
 $sql = $workreportBase . " AND is_carry NOT IN (1, 3) AND delegation_id=0 ORDER BY row_id ASC";
 $jobs = fetchRows($mysqli, $sql, "is", $userId, $date);

@@ -15,13 +15,38 @@ if (empty($date)) {
 }
 
 // 1. Fetch total act_time from tbl_workreports for this user and date
-$stmtAct = $mysqli->prepare("SELECT COALESCE(SUM(TIME_TO_SEC(act_time)), 0) as total_seconds FROM tbl_workreports WHERE user_id = ? AND date_report = ?");
+$stmtAct = $mysqli->prepare("
+    SELECT COALESCE(SUM(TIME_TO_SEC(act_time)), 0) as total_seconds 
+    FROM tbl_workreports 
+    WHERE user_id = ? 
+    AND date_report = ? 
+    AND act_time IS NOT NULL 
+    AND act_time != '00:00:00'
+");
 $stmtAct->bind_param("is", $userId, $date);
 $stmtAct->execute();
 $total_job_seconds = $stmtAct->get_result()->fetch_assoc()['total_seconds'];
 $stmtAct->close();
 
+// No jobs found validation
+if ($total_job_seconds <= 0) {
+    echo json_encode([
+        "status" => false,
+        "message" => "No jobs to submit."
+    ]);
+    exit;
+}
+
 $total_job = secondsToTime($total_job_seconds);
+
+// Validate total job time should not exceed 24 hours
+if ($total_job_seconds > 86400) {
+    echo json_encode([
+        "status" => false,
+        "message" => "Total job duration cannot exceed 24 hours."
+    ]);
+    exit;
+}
 
 // 2. Constants for freelancer completion
 $time_in = "08:00:00";

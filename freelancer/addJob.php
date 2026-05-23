@@ -37,11 +37,12 @@ if ($row = $rwIdResult->fetch_assoc()) {
 $row_id += 1;
 
 $mainType=1;
+$act_entry = date("Y-m-d H:i:s");
 
 // Insert into tbl_workreports
 $sql = "INSERT INTO tbl_workreports 
-    (user_id, date_report, row_id, taskname, job_no, act_time, description, status, main_type) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    (user_id, date_report, row_id, taskname, job_no, act_time, description, status, main_type, act_entry) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 $stmt = $mysqli->prepare($sql);
 if (!$stmt) {
@@ -50,8 +51,17 @@ if (!$stmt) {
 }
 
 $stmt->bind_param(
-    "isisssssi",
-    $userId, $date_report, $row_id, $taskname, $job_no, $act_time, $description, $status, $mainType
+    "isisssssis",
+    $userId,
+    $date_report,
+    $row_id,
+    $taskname,
+    $job_no,
+    $act_time,
+    $description,
+    $status,
+    $mainType,
+    $act_entry
 );
 
 if ($stmt->execute()) {
