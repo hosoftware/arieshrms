@@ -1,9 +1,14 @@
 <?php
 
+
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Content-Type: application/json");
+
+header("Cache-Control: no-store, no-cache, must-revalidate");
+header("Pragma: no-cache");
+header("Expires: 0");
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(204);
@@ -31,7 +36,7 @@ switch ($action) {
         }
 
         $sql = "SELECT
-            u.user_id, u.username, u.credential, u.full_name, u.display_name, u.employee_code,
+            u.user_id,u.is_regular as usertype, u.username, u.credential, u.full_name, u.display_name, u.employee_code,
             u.status, u.designation, u.gender, u.dob, u.email, u.personal_email,
             u.hourly_rate, u.is_lock, u.user_photo, wc.work_category_name, w.time_zone, u.gdoj,
             ROUND(TIMESTAMPDIFF(MONTH, u.gdoj, CURDATE()) / 12, 1) AS years_in_aries,
@@ -81,10 +86,13 @@ switch ($action) {
             exit;
         }
 
+        $user['usertype'] = DecideUserType($user['user_id']);
+
         $token = generateToken([
             'user_id' => $user['user_id'],
             'username' => $user['username'],
             'timezone' => $user['time_zone'],
+            'usertype' => $user['usertype']
         ]);
 
         $user['profile_img_url'] = "https://www.effism.com/images/employee/" . $user['user_photo'];
@@ -150,6 +158,8 @@ switch ($action) {
         $result = $stmt->get_result();
         $users = [];
         while ($row = $result->fetch_assoc()) {
+            $row['usertype'] = DecideUserType($row['user_id']);
+            $row['usertypes'] = DecideUserTypes($row['user_id']);
             $users[] = $row;
         }
         echo json_encode([
@@ -381,15 +391,67 @@ switch ($action) {
     case "fetchTime":
         require_once "effism/fetchTime.php";
         break;
-        
+
     case "mainType":
         require_once "effism/mainType.php";
         break;
-        
+
     case "subType":
         require_once "effism/subType.php";
         break;
-    
+
+    case "jobdiarySummary":
+        require_once "effism/jobdiarySummary.php";
+        break;
+
+    case "getDayType":
+        require_once "effism/getDayType.php";
+        break;
+
+    case "getDayLeaveTypes":
+        require_once "effism/getLeaveTypes.php";
+        break;
+
+    case "addEditRoutineJob":
+        require_once "effism/addEditRoutineJob.php";
+        break;
+
+    case "editDelegatedJob":
+        require_once "effism/editDelegatedJob.php";
+        break;
+
+    case "editCFJob":
+        require_once "effism/editCFJob.php";
+        break;
+
+    case "getJobNumbers":
+        require_once "effism/getJobNumbers.php";
+        break;
+
+    case "addJobFreelancer":
+        require_once "freelancer/addJob.php";
+        break;
+
+    case "listFreelancerJob":
+        require_once "freelancer/listJob.php";
+        break;
+
+    case "editFreelancerJob":
+        require_once "freelancer/editJob.php";
+        break;
+
+    case "completeFeelancerJobdiary":
+        require_once "freelancer/completeJodiary.php";
+        break;
+
+    case "jobSummaryFreelancer":
+        require_once "freelancer/jobSummary.php";
+        break;
+
+    case "deleteFreelancerJob":
+        require_once "freelancer/deleteJob.php";
+        break;
+
     default:
         echo json_encode([
             "status" => false,

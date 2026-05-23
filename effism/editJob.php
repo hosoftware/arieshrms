@@ -38,13 +38,16 @@ $act_time    = trim($_POST['act_time']    ?? '');
 $description = trim($_POST['description'] ?? '');
 $status      = trim($_POST['status']      ?? '0');
 $job_type =    trim($_POST['sub_type']   ?? '');
+$cf_date =    trim($_POST['cf_date']   ?? '');
+$target_date = trim($_POST['target_date']  ?? '');
 
 $sql = "UPDATE tbl_workreports SET 
-            taskname=?, main_type=?, job_no=?, est_time=?, act_time=?, description=?, status=?, job_type=?
+            taskname=?, main_type=?, job_no=?, est_time=?, act_time=?, description=?, status=?, job_type=?, target_date=?, cf_date=?
         WHERE workreport_id = ? AND user_id = ? AND date_report = ?";
 
 $stmt = $mysqli->prepare($sql);
-$stmt->bind_param("ssssssssiis", $taskname, $main_type, $job_no, $est_time, $act_time, $description, $status, $job_type, $report_id, $userId, $date_report);
+$stmt->bind_param("ssssssssssiis", 
+$taskname, $main_type, $job_no, $est_time, $act_time, $description, $status, $job_type, $target_date, $cf_date, $report_id, $userId, $date_report);
 
 if ($stmt->execute()) {
     echo json_encode([
