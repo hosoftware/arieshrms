@@ -104,7 +104,7 @@ switch ($action) {
             "token" => $token,
             "data" => $user
         ]);
-        break;
+    break;
 
     case "getLeaveTypes":
         require_once "jwt_auth.php";
