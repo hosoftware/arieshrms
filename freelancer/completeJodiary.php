@@ -65,7 +65,7 @@ $time_out_seconds = min(
 );
 
 $time_out = secondsToTime($time_out_seconds);               // 23:00:00 when overflow
-$night    = $night_seconds > 0 ? secondsToTime($night_seconds) : null;
+$night    = $night_seconds > 0 ? secondsToTime($night_seconds) : '00:00:00';
 $net_time = $total_job;                                     // full hours e.g. 28:00:00
 
 // 4. Upsert into tbl_time
