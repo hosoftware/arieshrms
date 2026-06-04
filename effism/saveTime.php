@@ -6,6 +6,10 @@ $auth = requireAuth();
 $user_id = $auth->uid;
 $date_log = $_POST['date'] ?? '';
 $work_status = $_POST['work_status'] ?? '';
+if($work_status=='WFH' || $work_status=='wfh')
+{
+    $work_status = strtolower($work_status);
+}
 $leave_type = $_POST['leave_type'] ?? '';
 $time_in = $_POST['time_in'] ?? '00:00:00';
 $time_out = $_POST['time_out'] ?? '00:00:00';
