@@ -452,6 +452,10 @@ switch ($action) {
         require_once "freelancer/deleteJob.php";
         break;
 
+    case "listIncentive":
+        require_once "incentive/listIncentive.php";
+        break;
+
     default:
         echo json_encode([
             "status" => false,

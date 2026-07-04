@@ -1,0 +1,76 @@
+{
+    "name": "elao/enum",
+    "description": "Extended PHP enums capabilities and frameworks integrations",
+    "keywords": [
+        "enum",
+        "symfony",
+        "doctrine"
+    ],
+    "type": "library",
+    "homepage": "https://github.com/Elao/PhpEnums",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Elao",
+            "homepage": "https://www.elao.com"
+        },
+        {
+            "name": "Maxime Steinhausser",
+            "email": "maxime.steinhausser@gmail.com",
+            "homepage": "https://github.com/ogizanagi"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Elao\\Enum\\": "src/"
+        },
+        "files": [
+            "src/Bridge/Symfony/VarDumper/Resources/register_caster.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Elao\\Enum\\Tests\\": "tests/",
+            "App\\": "tests/Fixtures/Integration/Symfony/src"
+        }
+    },
+    "prefer-stable": true,
+    "require": {
+        "php": ">=8.1"
+    },
+    "require-dev": {
+        "ext-pdo_sqlite": "*",
+        "composer/semver": "^3.2",
+        "doctrine/dbal": "^3.8|^4.2",
+        "doctrine/doctrine-bundle": "^2.11",
+        "doctrine/orm": "^2.20|^3.0",
+        "phpstan/phpstan": "^1.10",
+        "phpstan/phpstan-symfony": "^1.2",
+        "symfony/browser-kit": "^5.4.40|^6.4|^7.0",
+        "symfony/config": "^5.4.40|^6.4|^7.0",
+        "symfony/dependency-injection": "^5.4.40|^6.4|^7.0",
+        "symfony/filesystem": "^5.4.40|^6.4|^7.0",
+        "symfony/form": "^5.4.40|^6.4|^7.0",
+        "symfony/framework-bundle": "^5.4.40|^6.4|^7.0",
+        "symfony/http-kernel": "^5.4.40|^6.4|^7.0",
+        "symfony/phpunit-bridge": "^5.4.40|^6.4|^7.0",
+        "symfony/translation": "^5.4.40|^6.4|^7.0",
+        "symfony/var-dumper": "^5.4.40|^6.4|^7.0",
+        "symfony/var-exporter": "^5.4.40|^6.4|^7.0",
+        "symfony/yaml": "^5.4.40|^6.4|^7.0"
+    },
+    "conflict": {
+        "doctrine/dbal": ">=4.0,<4.2"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-2.x": "2.x-dev"
+        }
+    },
+    "config": {
+        "preferred-install": {
+            "*": "dist"
+        },
+        "sort-packages": true
+    }
+}

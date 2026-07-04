@@ -1,6 +1,6 @@
 <?php
 
- 
+ //ini_set('display_errors', '1');
 $date = $year.'-'.$month.'-01';
 $currentMonth = date('F',strtotime($date));
 
@@ -487,36 +487,42 @@ $pdf->Cell(37,5,number_format($row['PF_amount'],2),0,0,'R');
 
 
 $pdf->SetXY(120, 147.5);
-$pdf->Cell(30,5,'ESI',0,0,'L');
+$pdf->Cell(30,5,'VPF',0,0,'L');
 $pdf->SetXY(153, 147.5);
-$pdf->Cell(37,5,number_format($row['ESI_amount'],2),0,0,'R');
+$pdf->Cell(37,5,number_format($row['VPF_amount'],2),0,0,'R');
 
 $pdf->SetXY(120, 155);
-$pdf->Cell(30,5,'Welfare Fund',0,0,'L');
+$pdf->Cell(30,5,'ESI',0,0,'L');
 $pdf->SetXY(153, 155);
-$pdf->Cell(37,5,number_format($row['emp_WF'],2),0,0,'R');
+$pdf->Cell(37,5,number_format($row['ESI_amount'],2),0,0,'R');
 
 $pdf->SetXY(120, 162.5);
-$pdf->Cell(30,5,'TDS',0,0,'L');
+$pdf->Cell(30,5,'Welfare Fund',0,0,'L');
 $pdf->SetXY(153, 162.5);
-$pdf->Cell(37,5,number_format($row['TDS_deductions'],2),0,0,'R');
+$pdf->Cell(37,5,number_format($row['emp_WF'],2),0,0,'R');
 
 
 $pdf->SetXY(120, 170);
-$pdf->Cell(30,5,'Professional Tax',0,0,'L');
+$pdf->Cell(30,5,'TDS',0,0,'L');
 $pdf->SetXY(153, 170);
-$pdf->Cell(37,5,number_format($row['Proffesional_tax'],2),0,0,'R');
+$pdf->Cell(37,5,number_format($row['TDS_deductions'],2),0,0,'R');
 
 
 $pdf->SetXY(120, 177.5);
-$pdf->Cell(30,5,'Advance Repayment',0,0,'L');
+$pdf->Cell(30,5,'Professional Tax',0,0,'L');
 $pdf->SetXY(153, 177.5);
-$pdf->Cell(37,5,number_format($row['Advance'],2),0,0,'R');
+$pdf->Cell(37,5,number_format($row['Proffesional_tax'],2),0,0,'R');
 
 
 $pdf->SetXY(120, 185);
-$pdf->Cell(30,5,'Other Deductions',0,0,'L');
+$pdf->Cell(30,5,'Advance Repayment',0,0,'L');
 $pdf->SetXY(153, 185);
+$pdf->Cell(37,5,number_format($row['Advance'],2),0,0,'R');
+
+
+$pdf->SetXY(120, 192.5);
+$pdf->Cell(30,5,'Other Deductions',0,0,'L');
+$pdf->SetXY(153, 192.5);
 $pdf->Cell(37,5,number_format($othrDed,2),0,0,'R');
 
 // $pdf->SetXY(120, 192.5);
@@ -541,7 +547,7 @@ $pdf->SetXY(153, 170);
 $pdf->Cell(37,5,number_format($othrDed,2),0,0,'R');*/
 
 
-$total_deduction= $row['emp_WF']+$row['ESI_amount']+$row['PF_amount']+$row['ded1']+$row['ded2']+$row['ded3']+$row['ded4']+$row['ded5']+$row['TDS_deductions']+$row['Proffesional_tax']+$row['Advance'];
+$total_deduction= $row['emp_WF']+$row['ESI_amount']+$row['PF_amount']+$row['ded1']+$row['ded2']+$row['ded3']+$row['ded4']+$row['ded5']+$row['TDS_deductions']+$row['Proffesional_tax']+$row['Advance']+$row['VPF_amount'];
 
 $pdf->SetXY(120, 222.5);
 $pdf->Cell(30,5,'Total Deductions',0,0,'L');
@@ -748,6 +754,18 @@ $pdf->Cell(40,5,'EPF',0,0,'L');
 $pdf->SetXY(125, $y);
 $pdf->Cell(37,5,number_format($row['PF_amount'],2),0,0,'R');
 }
+
+if($row['VPF_amount'] >0)
+{
+   
+//$rect_y = $rect_y + $h + 1;
+    $y = $y + 6;
+$pdf->SetXY(20, $y);
+$pdf->Cell(40,5,'VPF',0,0,'L');
+$pdf->SetXY(125, $y);
+$pdf->Cell(37,5,number_format($row['VPF_amount'],2),0,0,'R');
+}
+
 if($row['ESI_amount'] >0)
 {
     $y = $y + 6;
@@ -848,7 +866,7 @@ if($row['Addition1'] >0)
 //$rect_y = $rect_y + $h + 1;
  $y = $y + 6;
 $pdf->SetXY(20, $y);
-$pdf->Cell(40,5,'Addition1',0,0,'L');
+$pdf->Cell(40,5,$row['Addition1_remarks'],0,0,'L');
 $pdf->SetXY(125, $y);
 $pdf->Cell(37,5,number_format($row['Addition1'],2),0,0,'R');
 }
@@ -856,7 +874,7 @@ if($row['Addition2'] >0)
 {
     $y = $y + 6;
 $pdf->SetXY(20, $y);
-$pdf->Cell(40,5,'Addition2',0,0,'L');
+$pdf->Cell(40,5,$row['Addition2_remarks'],0,0,'L');
 $pdf->SetXY(125, $y);
 $pdf->Cell(37,5,number_format($row['Addition2'],2),0,0,'R');
 }
@@ -889,6 +907,7 @@ $pdf->Cell(30,5,'This is a computer generated slip and does not require signatur
 //$pdf->SetFillColor(255,0,0);
 $pdf->SetDisplayMode('real');
 $pdf->Output("Salary_Slip_".$row['Name']."_".$currentMonth."_".$year.".pdf", "D");
+
 
 
 
